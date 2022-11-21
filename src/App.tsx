@@ -19,6 +19,7 @@ import _ from "lodash";
 import { formatUnits } from "@ethersproject/units";
 import React from "react";
 import { promises } from "./utils/constants";
+import { formatDisplayNumber } from "./utils/format-display-number";
 
 function App() {
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -74,7 +75,8 @@ function App() {
       >
         <Paper elevation={3} sx={{ padding: "1rem" }}>
           <Typography variant="h5" fontWeight={600}>
-            Total value: ${formatUnits(manageAssets.getTotalValue())}
+            Total value: $
+            {formatDisplayNumber(formatUnits(manageAssets.getTotalValue()))}
           </Typography>
         </Paper>
 
@@ -96,7 +98,7 @@ function App() {
                           variant="body2"
                           color="text.primary"
                         >
-                          ${formatUnits(el.totalValue)}
+                          ${formatDisplayNumber(formatUnits(el.totalValue))}
                         </Typography>
                       </React.Fragment>
                     }
