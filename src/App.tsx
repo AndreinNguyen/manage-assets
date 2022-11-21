@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  CircularProgress,
   CssBaseline,
   List,
   ListItem,
@@ -15,36 +16,31 @@ import { Asset } from "./services/interface";
 import _ from "lodash";
 import { formatUnits } from "@ethersproject/units";
 import React from "react";
-
-const wallets = [
-  "0x22bb68bd0b113ccf688e0759ac0b4abc013df824",
-  "0x9442dad1df11c858a900f55291dc1cf645ff66df",
-  "0x3ddfa8ec3052539b6c9549f12cea2c295cff5296",
-];
-
-const promises: Promise<Asset[]>[] = [];
-
-const getAssetsOfWallet = async (walletAddress: string) => {
-  const res = await fetch(
-    `https://staging-api.depocket.com/v1/account/${walletAddress}/balances?chain=bsc`,
-    {
-      method: "POST",
-    }
-  );
-  const data = await res.json();
-  return data;
-};
-
-wallets.forEach((el) => promises.push(getAssetsOfWallet(el)));
+import { promises } from "./utils/constants";
 
 function App() {
   const [assets, setAssets] = useState<Asset[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await Promise.all(promises);
-      const flatData = _.flatMap(data);
-      setAssets(flatData);
+      try {
+        setIsLoading(true);
+        const res = await Promise.allSettled(promises);
+        const arrayFulfilled: Asset[][] = [];
+        res.forEach((el) => {
+          if (el.status === "fulfilled") {
+            arrayFulfilled.push(el.value);
+          }
+        });
+
+        const flatData = _.flatMap(arrayFulfilled);
+        setAssets(flatData);
+      } catch (error) {
+        setIsLoading(false);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchData();
   }, []);
@@ -52,6 +48,18 @@ function App() {
   const manageAssets = useMemo(() => {
     return new ManageAssets(assets);
   }, [assets]);
+
+  if (isLoading)
+    return (
+      <Box
+        display="flex"
+        height={"100vh"}
+        alignItems="center"
+        justifyContent="center"
+      >
+        <CircularProgress />
+      </Box>
+    );
 
   return (
     <div>
@@ -64,7 +72,7 @@ function App() {
       >
         <Paper elevation={3} sx={{ padding: "1rem" }}>
           <Typography variant="h5" fontWeight={600}>
-            Total value: $ {formatUnits(manageAssets.getTotalValue())}
+            Total value: ${formatUnits(manageAssets.getTotalValue())}
           </Typography>
         </Paper>
 
@@ -85,7 +93,7 @@ function App() {
                         variant="body2"
                         color="text.primary"
                       >
-                        $ {formatUnits(el.totalValue)}
+                        ${formatUnits(el.totalValue)}
                       </Typography>
                     </React.Fragment>
                   }
