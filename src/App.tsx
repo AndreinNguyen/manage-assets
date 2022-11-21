@@ -4,6 +4,7 @@ import {
   CircularProgress,
   Container,
   CssBaseline,
+  Divider,
   List,
   ListItem,
   ListItemAvatar,
@@ -12,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { ManageAssets } from "./services/manage-asset";
+import { ManageAssets } from "./services/manage-assets";
 import { Asset } from "./services/interface";
 import _ from "lodash";
 import { formatUnits } from "@ethersproject/units";
@@ -50,8 +51,6 @@ function App() {
     return new ManageAssets(assets);
   }, [assets]);
 
-  console.log(manageAssets.getOutputAssets());
-
   if (isLoading)
     return (
       <Box
@@ -82,26 +81,29 @@ function App() {
         <Paper elevation={3} sx={{ padding: "1rem", marginTop: "1rem" }}>
           <List sx={{ width: "100%", bgcolor: "background.paper" }}>
             {manageAssets.getOutputAssets().map((el) => (
-              <ListItem alignItems="flex-start" key={el.address}>
-                <ListItemAvatar>
-                  <Avatar alt={el.icon_url} src={el.icon_url} />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={el.symbol}
-                  secondary={
-                    <React.Fragment>
-                      <Typography
-                        sx={{ display: "inline" }}
-                        component="span"
-                        variant="body2"
-                        color="text.primary"
-                      >
-                        ${formatUnits(el.totalValue)}
-                      </Typography>
-                    </React.Fragment>
-                  }
-                />
-              </ListItem>
+              <React.Fragment key={el.address}>
+                <ListItem alignItems="flex-start">
+                  <ListItemAvatar>
+                    <Avatar alt={el.icon_url} src={el.icon_url} />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={el.symbol}
+                    secondary={
+                      <React.Fragment>
+                        <Typography
+                          sx={{ display: "inline" }}
+                          component="span"
+                          variant="body2"
+                          color="text.primary"
+                        >
+                          ${formatUnits(el.totalValue)}
+                        </Typography>
+                      </React.Fragment>
+                    }
+                  />
+                </ListItem>
+                <Divider variant="inset" component="li" />
+              </React.Fragment>
             ))}
           </List>
         </Paper>

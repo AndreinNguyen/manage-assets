@@ -7,17 +7,9 @@ import { wmul } from "../utils/ds-math";
 
 export class ManageAssets {
   public assets: Asset[];
-  private assetGroupByTokenAddress: { [key: string]: Asset[] };
-  private refactorAssets: {
-    [key: string]: RefactorAssets;
-  };
-  public outputAsset: RefactorAssets[] = [];
 
   constructor(_assets: Asset[]) {
     this.assets = _assets;
-    this.assetGroupByTokenAddress = this.getAssetsGroupByTokenAddress();
-    this.refactorAssets = this.handleRefactorAssets();
-    this.outputAsset = this.getOutputAssets();
   }
 
   private getAssetsGroupByTokenAddress() {
@@ -36,10 +28,12 @@ export class ManageAssets {
       [key: string]: RefactorAssets;
     } = {};
 
-    Object.keys(this.assetGroupByTokenAddress).forEach((key) => {
-      const token = this.assetGroupByTokenAddress[key][0];
+    const assetGroupByTokenAddress = this.getAssetsGroupByTokenAddress();
 
-      const lists = this.assetGroupByTokenAddress[key];
+    Object.keys(this.getAssetsGroupByTokenAddress()).forEach((key) => {
+      const token = assetGroupByTokenAddress[key][0];
+
+      const lists = assetGroupByTokenAddress[key];
 
       const totalBalance = lists.reduce(
         (pre, cur) => pre.add(parseUnits(fromExponential(cur.balance))),
@@ -61,13 +55,13 @@ export class ManageAssets {
   }
 
   public getOutputAssets() {
-    return Object.keys(this.refactorAssets).map(
-      (key) => this.refactorAssets[key]
-    );
+    const refactorAssets = this.handleRefactorAssets();
+
+    return Object.keys(refactorAssets).map((key) => refactorAssets[key]);
   }
 
   public getTotalValue() {
-    return this.outputAsset.reduce(
+    return this.getOutputAssets().reduce(
       (pre, cur) => pre.add(cur.totalValue),
       BigNumber.from(0)
     );
