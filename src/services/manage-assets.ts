@@ -18,8 +18,6 @@ export class ManageAssets {
 
   private getValue(balance: BigNumber, price: number) {
     const priceEther = parseUnits(fromExponential(price.toString()));
-    // console.log(balance.mul(priceEther));
-    // return formatUnits(balance.mul(priceEther));
     return wmul(balance, priceEther);
   }
 
