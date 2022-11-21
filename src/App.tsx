@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   CircularProgress,
+  Container,
   CssBaseline,
   List,
   ListItem,
@@ -11,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { ManageAssets } from "./services";
+import { ManageAssets } from "./services/manage-asset";
 import { Asset } from "./services/interface";
 import _ from "lodash";
 import { formatUnits } from "@ethersproject/units";
@@ -49,6 +50,8 @@ function App() {
     return new ManageAssets(assets);
   }, [assets]);
 
+  console.log(manageAssets.getOutputAssets());
+
   if (isLoading)
     return (
       <Box
@@ -62,7 +65,7 @@ function App() {
     );
 
   return (
-    <div>
+    <Container sx={{ marginY: 2 }}>
       <CssBaseline />
       <Box
         display="flex"
@@ -103,7 +106,7 @@ function App() {
           </List>
         </Paper>
       </Box>
-    </div>
+    </Container>
   );
 }
 

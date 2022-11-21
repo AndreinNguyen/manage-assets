@@ -1,4 +1,4 @@
-import { getAssetsOfWallet } from "../services";
+import { getAssetsOfWallet } from "../services/fetch-assets";
 import { Asset } from "../services/interface";
 
 const wallets = [

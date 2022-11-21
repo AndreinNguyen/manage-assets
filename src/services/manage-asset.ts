@@ -3,7 +3,7 @@ import _ from "lodash";
 import { parseUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import fromExponential from "from-exponential";
-import { wmul } from "../utils/DSMath";
+import { wmul } from "../utils/ds-math";
 
 export class ManageAssets {
   public assets: Asset[];
@@ -73,14 +73,3 @@ export class ManageAssets {
     );
   }
 }
-
-export const getAssetsOfWallet = async (walletAddress: string) => {
-  const res = await fetch(
-    `https://staging-api.depocket.com/v1/account/${walletAddress}/balances?chain=bsc`,
-    {
-      method: "POST",
-    }
-  );
-  const data = await res.json();
-  return data;
-};
